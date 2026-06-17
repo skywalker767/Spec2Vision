@@ -461,6 +461,38 @@ CI：[`.github/workflows/test.yml`](.github/workflows/test.yml)（format + compi
 
 ---
 
+## 📝 CS599 期末报告与封面信息
+
+| 文件 | 说明 |
+|------|------|
+| [`docs/CS599_大作业报告.md`](docs/CS599_大作业报告.md) | 期末报告源文件 |
+| [`docs/CS599_大作业报告.pdf`](docs/CS599_大作业报告.pdf) | 导出的 PDF |
+| [`docs/student_info.json`](docs/student_info.json) | 封面个人信息配置 |
+
+更新姓名、学号、专业、部署 URL 等**无需重写正文**，只需编辑 JSON 并运行脚本：
+
+```bash
+# 第一次生成个人信息模板
+python scripts/update_report_personal_info.py
+
+# 编辑 docs/student_info.json
+
+# 只更新 Markdown 中的封面信息
+python scripts/update_report_personal_info.py
+
+# 更新封面信息并重新导出 PDF
+python scripts/update_report_personal_info.py --build-pdf
+```
+
+生成 PNG 架构图与完整 PDF（fpdf2 回退）：
+
+```bash
+python scripts/generate_report_figures.py
+python scripts/generate_report_pdf.py
+```
+
+---
+
 ## 📚 文档
 
 | 文档 | 内容 |
