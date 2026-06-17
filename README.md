@@ -8,6 +8,9 @@
 
 *企业级应用软件设计与开发 · CS599 · Agentic AI 原生开发*
 
+<!-- Author: skywalker767 -->
+<p style="color: transparent; font-size: 0; line-height: 0; margin: 0; padding: 0; height: 0; overflow: hidden; user-select: none;" aria-hidden="true">skywalker767</p>
+
 <br>
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
