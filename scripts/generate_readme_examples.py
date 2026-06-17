@@ -1,10 +1,12 @@
 """Generate README showcase assets via the full generation pipeline.
 
-Uses configured providers from ``.env`` (typically ``IMAGE_PROVIDER=openai`` for
-real PNGs). Academic SVG flowcharts are rendered locally by ``DiagramGenerator``.
+All showcase assets must be **PNG** from ``IMAGE_PROVIDER=openai`` (Images API).
+Uses ``.env`` for API keys. Run:
+
+  IMAGE_PROVIDER=openai LLM_PROVIDER=deepseek python scripts/generate_readme_examples.py
 
 Outputs:
-  docs/images/examples/<slug>.{png|svg}
+  docs/images/examples/<slug>.png
   docs/images/examples/manifest.json
 """
 
@@ -96,7 +98,11 @@ SHOWCASE_CASES: list[dict] = [
         "slug": "acad_graphical",
         "featured": False,
         "caption": "NLP Encoder-Decoder 图形摘要",
-        "user_input": "为 NLP 论文生成 graphical abstract，展示 encoder-decoder 架构与数据流 pipeline diagram，学术期刊风格流程图",
+        "user_input": (
+            "为 NLP 论文生成 graphical abstract 信息图（PNG），展示 Encoder-Decoder 架构："
+            "Input → Encoder → Context → Decoder → Output，模块圆角框 + 箭头数据流，"
+            "白底蓝灰学术配色，期刊级排版，英文模块标签清晰可读，专业印刷质量。"
+        ),
         "aspect_ratio": "16:9",
         "task_type": "academic_figure",
         "answers": [
@@ -110,7 +116,11 @@ SHOWCASE_CASES: list[dict] = [
         "slug": "acad_cv_pipeline",
         "featured": False,
         "caption": "计算机视觉实验 pipeline",
-        "user_input": "计算机视觉实验 pipeline 示意图，数据增强到分类输出，学术 framework diagram，模块箭头清晰",
+        "user_input": (
+            "计算机视觉实验 pipeline 方法图（PNG）：Data Augmentation → Backbone → "
+            "Feature Pooling → Classification Head → Softmax Output，"
+            "学术 framework diagram，模块对齐、箭头标注数据流，白底简洁期刊风格。"
+        ),
         "aspect_ratio": "4:3",
         "task_type": "academic_figure",
         "answers": [
@@ -287,7 +297,11 @@ def main() -> None:
             continue
 
         ext = _ext_for(src)
-        dest = OUT_DIR / f"{slug}{ext}"
+        if ext != ".png":
+            print(f"FAILED {slug}: expected PNG from Images API, got {ext}")
+            continue
+
+        dest = OUT_DIR / f"{slug}.png"
         shutil.copy2(src, dest)
         for stale in OUT_DIR.glob(f"{slug}.*"):
             if stale != dest and stale.is_file():
@@ -308,13 +322,13 @@ def main() -> None:
             "caption": case.get("caption", result.visual_spec.title),
             "task_type": result.task_type,
             "aspect_ratio": result.visual_spec.aspect_ratio,
-            "format": ext.lstrip("."),
+            "format": "png",
             "title": result.visual_spec.title,
             "score": result.evaluation.overall_score,
-            "provider": provider if ext == ".png" else "diagram_generator",
+            "provider": provider,
         }
         items.append(meta)
-        print(f"Saved: {dest.name} score={meta['score']} format={meta['format']}")
+        print(f"Saved: {dest.name} format=png provider={provider}")
 
     _cleanup_stale_assets(keep_slugs)
     items.sort(

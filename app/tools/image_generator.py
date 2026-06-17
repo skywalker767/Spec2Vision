@@ -141,12 +141,9 @@ class OpenAIImageGenerator:
 
     @staticmethod
     def _model_candidates(primary: str) -> list[str]:
-        models = [primary.strip(), "gpt-image-2", "gpt-image-1"]
-        seen: list[str] = []
-        for m in models:
-            if m and m not in seen:
-                seen.append(m)
-        return seen
+        """Use the configured model only — avoids noisy fallback to unavailable gateways."""
+        model = (primary or "gpt-image-1").strip()
+        return [model] if model else ["gpt-image-1"]
 
     @staticmethod
     def _is_retryable(exc: ImageProviderError) -> bool:

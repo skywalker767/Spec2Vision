@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-17T14:27:39.523900+00:00",
+  "generated_at": "2026-06-17T15:16:54.088107+00:00",
   "image_provider": "openai",
   "llm_provider": "deepseek",
   "count": 9,
@@ -24,9 +24,9 @@
       "task_type": "academic_figure",
       "aspect_ratio": "4:3",
       "format": "png",
-      "title": "五阶段机器学习方法流水线图",
-      "score": 67,
-      "provider": "diagram_generator_png"
+      "title": "五阶段双分支神经网络方法流程图",
+      "score": 80,
+      "provider": "openai"
     },
     {
       "slug": "ppt_cover",
@@ -73,8 +73,8 @@
       "aspect_ratio": "16:9",
       "format": "png",
       "title": "编码器-解码器架构数据流管道图",
-      "score": 67,
-      "provider": "diagram_generator_png"
+      "score": 59,
+      "provider": "openai"
     },
     {
       "slug": "acad_cv_pipeline",
@@ -84,9 +84,9 @@
       "task_type": "academic_figure",
       "aspect_ratio": "4:3",
       "format": "png",
-      "title": "计算机视觉实验pipeline示意图",
-      "score": 63,
-      "provider": "diagram_generator_png"
+      "title": "计算机视觉实验Pipeline模块化流程图",
+      "score": 68,
+      "provider": "openai"
     },
     {
       "slug": "ppt_business",

@@ -25,7 +25,7 @@
 
 ## ✨ 效果展示
 
-> **默认 clone 后使用 Mock provider**（无 API Key、可复现）。下方预览图为维护者用 OpenAI Images API **可选生成**的静态样例（PNG），存放于 `docs/images/examples/`。
+> **默认 clone 后使用 Mock provider**（无 API Key、可复现）。下方 **9 张 PNG 预览图**由维护者通过 OpenAI Images API 生成，存放于 `docs/images/examples/`。
 >
 > 老师验收请优先看 [`examples/demo/`](examples/demo/)（Mock 完整工件）或运行 `python benchmark.py --demo examples/ecommerce_case.json`。
 
@@ -123,9 +123,9 @@
 | `ecommerce_coffee` | 电商 | 1:1 | PNG | openai |
 | `ecom_skincare` | 电商 | 16:9 | PNG | openai |
 | `ecom_sneakers` | 电商 | 16:9 | PNG | openai |
-| `academic_pipeline` | 学术 | 4:3 | PNG | diagram (PNG) |
-| `acad_graphical` | 学术 | 16:9 | PNG | diagram (PNG) |
-| `acad_cv_pipeline` | 学术 | 4:3 | PNG | diagram (PNG) |
+| `academic_pipeline` | 学术 | 4:3 | PNG | openai |
+| `acad_graphical` | 学术 | 16:9 | PNG | openai |
+| `acad_cv_pipeline` | 学术 | 4:3 | PNG | openai |
 | `ppt_cover` | PPT | 16:9 | PNG | openai |
 | `ppt_business` | PPT | 16:9 | PNG | openai |
 | `ppt_infographic` | PPT | 16:9 | PNG | openai |
