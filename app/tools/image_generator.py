@@ -11,13 +11,18 @@ from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 
+from app.tools.aspect_ratio import resolve_aspect_ratio
+
 _ASPECT_TO_SIZE = {
     "1:1": "1024x1024",
-    "16:9": "1024x1024",
-    "4:5": "1024x1024",
-    "3:4": "1024x1024",
-    "4:3": "1024x1024",
-    "A4": "1024x1024",
+    "16:9": "1792x1024",
+    "9:16": "1024x1792",
+    "4:5": "1024x1536",
+    "3:4": "1024x1536",
+    "4:3": "1536x1024",
+    "A4": "1024x1536",
+    "A4 portrait": "1024x1536",
+    "A4 landscape": "1536x1024",
 }
 
 _RETRYABLE_STATUS = {429, 502, 503, 524}
@@ -41,6 +46,9 @@ def _compact_image_prompt(prompt: str, title: str, max_len: int = 800) -> str:
 class OpenAIImageGenerator:
     """Generate images via OpenAI-compatible /v1/images/generations."""
 
+    provider_name = "openai"
+    mode = "real"
+
     def generate(
         self,
         task_id: str,
@@ -59,7 +67,7 @@ class OpenAIImageGenerator:
         provider = (settings.image_provider or "openai").lower().strip()
         if provider == "mock":
             raise ImageProviderError(
-                "Mock image provider is disabled. Set IMAGE_PROVIDER=openai in .env"
+                "Use get_image_generator() for mock provider; OpenAIImageGenerator is API-only."
             )
         if provider != "openai":
             raise ImageProviderError(
@@ -83,7 +91,8 @@ class OpenAIImageGenerator:
         image_prompt = _compact_image_prompt(prompt, title)
 
         for attempt in range(_MAX_ATTEMPTS):
-            size = _ASPECT_TO_SIZE.get(aspect_ratio, "1024x1024")
+            resolution = resolve_aspect_ratio(aspect_ratio)
+            size = resolution.size
             if attempt > 0:
                 image_prompt = _compact_image_prompt(prompt, title, max_len=500)
                 size = "1024x1024"

@@ -9,7 +9,25 @@ services:
       - .env
     volumes:
       - ./storage:/app/storage
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    profiles: ["dev", "prod"]
+
+  api-dev:
+    extends:
+      service: api
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    profiles: ["dev"]
+
+  api-prod:
+    extends:
+      service: api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
+    profiles: ["prod"]
 
   ui:
     build: .
@@ -20,7 +38,19 @@ services:
     volumes:
       - ./storage:/app/storage
     environment:
-      - API_BASE_URL=http://api:8000
+      - API_BASE_URL=http://api-dev:8000
     command: streamlit run app/ui/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
     depends_on:
-      - api
+      api-dev:
+        condition: service_healthy
+    profiles: ["dev"]
+
+  ui-prod:
+    extends:
+      service: ui
+    environment:
+      - API_BASE_URL=http://api-prod:8000
+    depends_on:
+      api-prod:
+        condition: service_healthy
+    profiles: ["prod"]

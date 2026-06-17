@@ -146,6 +146,9 @@ class GenerationService:
                 continue
         return summaries
 
+    def count_tasks(self, db: Session) -> int:
+        return count_task_records(db)
+
     def get_stats(self, db: Session) -> StatsResponse:
         """Aggregate statistics across all stored tasks."""
         settings = get_settings()

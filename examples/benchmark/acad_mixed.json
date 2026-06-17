@@ -1,0 +1,11 @@
+{
+  "id": "acad_mixed",
+  "user_input": "做一个模型架构图，同时用于 PPT 汇报和论文投稿，展示 algorithm pipeline。",
+  "task_type": "auto",
+  "aspect_ratio": "16:9",
+  "expected_task_type": "academic_figure",
+  "required_spec_fields": ["title", "purpose"],
+  "min_evaluation_score": 45,
+  "expected_output_type": "svg",
+  "notes": "Mixed-domain prompt leaning academic"
+}

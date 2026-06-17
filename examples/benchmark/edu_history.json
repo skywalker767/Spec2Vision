@@ -1,0 +1,10 @@
+{
+  "id": "edu_history",
+  "user_input": "为历史课程制作教学配图，主题是丝绸之路的关键节点与贸易路线，适合 PPT 汇报使用，信息层次分明。",
+  "task_type": "auto",
+  "aspect_ratio": "16:9",
+  "expected_task_type": "ppt_visual",
+  "required_spec_fields": ["educational.topic", "title"],
+  "min_evaluation_score": 55,
+  "expected_output_type": "png"
+}

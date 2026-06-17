@@ -1,0 +1,11 @@
+{
+  "id": "edu_ambiguous",
+  "user_input": "帮我画一张图，讲清楚三个步骤，给学生看。",
+  "task_type": "auto",
+  "aspect_ratio": "1:1",
+  "expected_task_type": "ppt_visual",
+  "required_spec_fields": ["title"],
+  "min_evaluation_score": 45,
+  "expected_output_type": "png",
+  "notes": "Ambiguous educational prompt"
+}

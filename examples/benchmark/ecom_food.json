@@ -1,0 +1,10 @@
+{
+  "id": "ecom_food",
+  "user_input": "设计零食大礼包双11促销主图，商品是坚果礼盒，需要突出满减优惠、包邮信息和电商广告风格，适合淘宝 banner。",
+  "task_type": "auto",
+  "aspect_ratio": "1:1",
+  "expected_task_type": "ecommerce_banner",
+  "required_spec_fields": ["title", "key_elements", "purpose"],
+  "min_evaluation_score": 55,
+  "expected_output_type": "png"
+}

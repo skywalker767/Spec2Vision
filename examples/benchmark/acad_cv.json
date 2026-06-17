@@ -1,0 +1,10 @@
+{
+  "id": "acad_cv",
+  "user_input": "Create an academic diagram for a computer vision pipeline: input image, backbone CNN, detection head, and output bounding boxes with labels.",
+  "task_type": "auto",
+  "aspect_ratio": "4:3",
+  "expected_task_type": "academic_figure",
+  "required_spec_fields": ["academic.labels", "key_elements"],
+  "min_evaluation_score": 55,
+  "expected_output_type": "svg"
+}

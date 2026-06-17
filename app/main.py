@@ -107,7 +107,14 @@ def list_tasks(
 ):
     service = get_generation_service()
     tasks = service.list_tasks(db, limit=limit, offset=offset)
-    return TaskListResponse(tasks=tasks, total=len(tasks))
+    total = service.count_tasks(db)
+    return TaskListResponse(
+        tasks=tasks,
+        total=total,
+        limit=limit,
+        offset=offset,
+        returned_count=len(tasks),
+    )
 
 
 @app.get("/tasks/{task_id}", response_model=GenerationResult)

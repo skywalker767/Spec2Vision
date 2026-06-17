@@ -7,6 +7,7 @@ import logging
 from app.config import get_settings
 from app.llm.base import BaseLLM
 from app.llm.deepseek_llm import DeepSeekLLM
+from app.llm.mock_llm import MockLLM
 from app.llm.openai_llm import OpenAILLM
 
 logger = logging.getLogger(__name__)
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 _PROVIDERS: dict[str, type[BaseLLM]] = {
     "openai": OpenAILLM,
     "deepseek": DeepSeekLLM,
+    "mock": MockLLM,
 }
 
 
@@ -26,15 +28,13 @@ def get_llm(provider: str | None = None) -> tuple[BaseLLM, str]:
     settings = get_settings()
     requested = (provider or settings.llm_provider or "openai").lower().strip()
 
-    if requested == "mock":
-        raise LLMProviderError(
-            "Mock LLM is disabled. Set LLM_PROVIDER=openai or deepseek in .env"
-        )
+    if requested == "mock" or settings.demo_mode:
+        return MockLLM(), "mock"
 
     cls = _PROVIDERS.get(requested)
     if cls is None:
         raise LLMProviderError(
-            f"Unknown LLM_PROVIDER='{requested}'. Supported: openai, deepseek"
+            f"Unknown LLM_PROVIDER='{requested}'. Supported: openai, deepseek, mock"
         )
 
     instance = cls()

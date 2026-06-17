@@ -1,0 +1,10 @@
+{
+  "id": "edu_climate",
+  "user_input": "制作一张关于气候变化的教育信息图 infographic，帮助中学生理解温室效应、碳排放与可再生能源，层次清晰、适合课堂展示。",
+  "task_type": "auto",
+  "aspect_ratio": "16:9",
+  "expected_task_type": "ppt_visual",
+  "required_spec_fields": ["educational.topic", "educational.key_concepts"],
+  "min_evaluation_score": 55,
+  "expected_output_type": "png"
+}

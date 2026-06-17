@@ -18,6 +18,8 @@ from app.agents.requirement_agent import RequirementAgent
 from app.agents.revision_agent import RevisionAgent
 from app.agents.router_agent import TaskRouterAgent
 from app.agents.visual_spec_agent import VisualSpecAgent
+from app.config import get_settings
+from app.graph.errors import WorkflowExecutionError, WorkflowProgrammingError
 from app.models.schemas import ClarificationAnswer, GenerationResult, WorkflowState, utc_now_iso
 
 
@@ -131,14 +133,31 @@ class VisionFlowGraph:
         return graph.compile()
 
     def run(self, state: WorkflowState) -> WorkflowState:
-        """Execute the LangGraph workflow with pipeline fallback."""
+        """Execute the LangGraph workflow with traceable pipeline fallback."""
+        settings = get_settings()
         try:
             result = self._graph.invoke(state)
             if isinstance(result, dict):
                 return WorkflowState(**result)
             return result
-        except Exception:
-            return run_pipeline(state)
+        except (TypeError, AttributeError, NameError, ImportError, SyntaxError) as exc:
+            if settings.workflow_debug:
+                raise WorkflowProgrammingError(str(exc), fallback_mode=None) from exc
+            state.error_message = f"{type(exc).__name__}: {exc}"
+            state.workflow_error_type = type(exc).__name__
+            state.workflow_fallback = "none_programming_error"
+            raise WorkflowProgrammingError(str(exc)) from exc
+        except Exception as exc:
+            if settings.workflow_debug:
+                raise WorkflowExecutionError(str(exc), fallback_mode="pipeline") from exc
+            state.error_message = f"{type(exc).__name__}: {exc}"
+            state.workflow_error_type = type(exc).__name__
+            state.workflow_fallback = "pipeline"
+            fallback_state = run_pipeline(state)
+            fallback_state.workflow_fallback = "pipeline"
+            fallback_state.workflow_error_type = type(exc).__name__
+            fallback_state.error_message = state.error_message
+            return fallback_state
 
     def to_result(self, state: WorkflowState) -> GenerationResult:
         """Convert final workflow state to GenerationResult."""

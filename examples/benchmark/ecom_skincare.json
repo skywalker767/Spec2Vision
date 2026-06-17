@@ -1,0 +1,10 @@
+{
+  "id": "ecom_skincare",
+  "user_input": "为一款玻尿酸保湿精华液设计电商主图 poster，突出补水卖点与温和配方，适合天猫详情页投放，加入「限时8折」促销标签和「立即购买」CTA。",
+  "task_type": "auto",
+  "aspect_ratio": "4:5",
+  "expected_task_type": "ecommerce_banner",
+  "required_spec_fields": ["product_poster.product_name", "product_poster.cta", "aspect_ratio"],
+  "min_evaluation_score": 55,
+  "expected_output_type": "png"
+}

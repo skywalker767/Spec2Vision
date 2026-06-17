@@ -20,7 +20,7 @@ https://github.com/skywalker767
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![LangGraph](https://img.shields.io/badge/LangGraph-Agent_Orchestration-6366F1?style=for-the-badge)](https://github.com/langchain-ai/langgraph)
-[![Tests](https://img.shields.io/badge/Tests-41_passed-22C55E?style=for-the-badge)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-71_passed-22C55E?style=for-the-badge)](tests/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 [生成示例](#-生成示例) · [快速开始](#-快速开始) · [核心亮点](#-核心亮点) · [Agent 矩阵](#-agent-矩阵) · [API](#-api-一览) · [文档](#-文档)
@@ -87,10 +87,11 @@ Spec2Vision 接收自然语言（或上传 PDF 论文），自动路由到 **电
 <td width="33%" valign="top">
 
 ### 🧭 智能路由
-自动识别任务类型：
-- `ecommerce_banner` 电商营销图
-- `academic_figure` 论文图示
-- `ppt_visual` PPT 配图
+混合路由（关键词/正则 + 可选 LLM）：
+- `ecommerce_banner` 电商营销图 / 商品海报
+- `academic_figure` 论文图示 / 学术流程图
+- `ppt_visual` PPT 配图 / 教育信息图
+- 输出 `RouteResult`：置信度、证据、是否使用 LLM、回退原因
 
 </td>
 <td width="33%" valign="top">
@@ -133,10 +134,11 @@ Spec2Vision 接收自然语言（或上传 PDF 论文），自动路由到 **电
 <td valign="top">
 
 ### 📊 质量闭环
-五维评分 + 风险词检测：
-- 需求匹配 / 领域合规
-- 视觉质量 / Prompt 完整度
-- 追溯性 · 可选自动修订
+多指标确定性评估 + 风险词检测：
+- Spec 完整度 / Prompt 对齐 / 领域合规
+- 输出有效性（PNG 尺寸、SVG XML）
+- Trace 完整性 / 可访问性
+- 可选 LLM 补充建议 · 低分自动修订
 
 </td>
 </tr>
@@ -238,7 +240,7 @@ graph TB
 
 | Agent | 职责 | 输入 → 输出 |
 |-------|------|-------------|
-| **TaskRouterAgent** | 任务类型路由 | `user_input` → `task_type` |
+| **TaskRouterAgent** | 混合任务路由（规则 + LLM） | `user_input` → `task_type` + `RouteResult` |
 | **ClarificationAgent** | 需求澄清（静态 + LLM 动态题） | 描述 → `ClarificationQuestion[]` |
 | **RequirementAgent** | 需求解析 + 澄清合并 | 描述 + 答案 → `requirement` |
 | **VisualSpecAgent** | 结构化视觉规格 | requirement → `VisualSpec` |
@@ -280,6 +282,16 @@ copy .env.example .env    # Windows
 
 ### 2. 配置密钥（可选）
 
+**方式 A — 可复现 Demo（无需付费 API Key，推荐答辩/CI）：**
+
+```env
+DEMO_MODE=true
+LLM_PROVIDER=mock
+IMAGE_PROVIDER=mock
+```
+
+**方式 B — 真实 API：**
+
 编辑 `.env`（**切勿提交到 Git**）：
 
 ```env
@@ -292,7 +304,7 @@ OPENAI_BASE_URL=https://your-compatible-endpoint/v1
 OPENAI_IMAGE_MODEL=gpt-image-2
 ```
 
-> 不配置 API Key 时，文本链路可 fallback 到规则模板；图像生成需配置 `IMAGE_PROVIDER` 与对应 Key。
+> `DEMO_MODE=true` 时自动使用确定性 Mock LLM + Mock 图像生成，可完整跑通路由→规格→生成→评估链路。真实图像质量需配置 OpenAI 兼容 Images API。
 
 ### 3. 一键启动
 
@@ -314,8 +326,69 @@ python run.py
 
 ```bash
 python -m pytest tests/ -v
-# 41 passed ✅
+# 71 passed ✅（默认离线，无需 API Key）
 ```
+
+---
+
+## 🧪 Reproducible Demo Mode
+
+无需外部 API Key 即可端到端运行：
+
+```bash
+# .env
+DEMO_MODE=true
+IMAGE_PROVIDER=mock
+LLM_PROVIDER=mock
+```
+
+| 组件 | Demo 行为 | 真实 API 行为 |
+|------|-----------|---------------|
+| 文本 LLM | `MockLLM` 返回确定性 JSON | DeepSeek / OpenAI |
+| 图像生成 | `MockImageGenerator` 生成带元数据的 PNG 占位图 | OpenAI Images API |
+| 学术 SVG | 本地 `DiagramGenerator`（始终离线） | 同左 |
+| 评估 | 确定性多指标规则引擎 | 同左 + 可选 LLM 建议 |
+
+启动后访问 `/health` 可查看当前 `llm_provider` / `image_provider`。
+
+---
+
+## 📏 Evaluation Methodology
+
+评估器（`app/tools/evaluator.py`）默认**确定性、离线**，不分析图像语义内容。
+
+| 指标 | 说明 |
+|------|------|
+| `spec_completeness` | VisualSpec 必填字段 + 领域扩展字段完整度 |
+| `prompt_spec_alignment` | prompt 与 main_subject / key_elements 对齐 |
+| `task_domain_compliance` | 领域关键词与约束覆盖 |
+| `output_validity` | 文件存在、PNG 尺寸、SVG XML 可解析 |
+| `trace_completeness` | Agent trace 步骤数与核心 Agent 覆盖 |
+| `accessibility` | 文字密集型任务的对比度/标签检查（启发式） |
+| `risk_penalty` | 绝对化宣传词检测 |
+
+API 仍返回兼容字段：`requirement_match_score`、`domain_compliance_score` 等五维分数 + `overall_score`。
+
+**局限：** 不调用视觉模型做美学/语义评分；PNG 质量仅验证格式与尺寸；LLM 增强建议不改变数值分数。
+
+---
+
+## 📊 Benchmark
+
+15 个基准用例（5 电商海报 + 5 教育信息图 + 5 学术图），含模糊/边界样本：
+
+```bash
+make benchmark
+# 或
+python -m app.tools.benchmark
+```
+
+输出：
+
+- `storage/reports/benchmark_report.json` — 机器可读报告
+- `storage/reports/benchmark_report.md` — Markdown 摘要
+
+每项用例定义 `expected_task_type`、`required_spec_fields`、`min_evaluation_score`。在 Demo 模式下可离线运行全套 benchmark。
 
 ---
 
@@ -328,7 +401,7 @@ python -m pytest tests/ -v
 | `POST` | `/extract` | 上传 PDF/TXT，提取论文概要 |
 | `POST` | `/clarify` | 获取澄清选择题 |
 | `POST` | `/generate` | 执行完整生成流水线 |
-| `GET` | `/tasks` | 历史任务列表 |
+| `GET` | `/tasks` | 历史任务列表（`total`/`limit`/`offset`/`returned_count`） |
 | `GET` | `/tasks/{id}` | 单任务详情 |
 | `GET` | `/tasks/{id}/asset` | 下载生成资产 |
 | `DELETE` | `/tasks/{id}` | 删除任务 |
@@ -372,10 +445,11 @@ python -m pytest tests/ -v
 | 数据模型 | Pydantic v2 |
 | 数据库 | SQLite |
 | 文本 LLM | DeepSeek / OpenAI 兼容 |
-| 图像生成 | OpenAI 兼容 Images API |
+| 图像生成 | OpenAI 兼容 Images API 或 Mock |
 | 文档解析 | pypdf + LLM 摘要 |
-| 测试 | pytest（41 cases） |
-| 部署 | Docker / docker-compose |
+| 测试 | pytest（71 cases，离线默认） |
+| CI | GitHub Actions（lint + pytest） |
+| 部署 | Docker Compose（dev/prod profiles） |
 
 ---
 
@@ -397,7 +471,7 @@ Spec2Vision/
 │   ├── demo/            # Demo Day 答辩脚本
 │   ├── images/          # 架构 Mermaid 源文件 + README 示例图
 │   │   └── examples/    # 三领域生成样例（PNG）
-├── examples/            # 三领域示例 JSON
+├── examples/            # 示例 JSON + benchmark/（15 用例）
 ├── scripts/             # 工具脚本（含 README 示例图生成）
 ├── tests/               # pytest 测试套件
 ├── storage/             # 生成资产（gitignored）

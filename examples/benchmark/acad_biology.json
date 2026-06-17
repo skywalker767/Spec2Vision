@@ -1,0 +1,10 @@
+{
+  "id": "acad_biology",
+  "user_input": "为生物论文生成实验 framework 图，包含样本采集、预处理、测序、分析与结果可视化模块，要求箭头方向明确并附 caption。",
+  "task_type": "auto",
+  "aspect_ratio": "A4 landscape",
+  "expected_task_type": "academic_figure",
+  "required_spec_fields": ["academic.caption", "academic.directionality"],
+  "min_evaluation_score": 55,
+  "expected_output_type": "svg"
+}

@@ -11,6 +11,30 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 TaskTypeStr = Literal["ecommerce_banner", "academic_figure", "ppt_visual"]
 VALID_TASK_TYPES = ("ecommerce_banner", "academic_figure", "ppt_visual")
+VALID_ASPECT_RATIOS = (
+    "1:1", "16:9", "9:16", "4:5", "3:4", "4:3",
+    "A4", "A4 portrait", "A4 landscape",
+)
+
+
+def validate_task_type(task_type: str) -> str:
+    """Validate and normalize task_type; raises ValueError if invalid."""
+    if task_type not in VALID_TASK_TYPES:
+        raise ValueError(
+            f"Invalid task_type '{task_type}'. Must be one of: {', '.join(VALID_TASK_TYPES)}"
+        )
+    return task_type
+
+
+class RouteResult(BaseModel):
+    """Structured routing decision with confidence and evidence."""
+
+    task_type: TaskTypeStr
+    confidence: float = Field(..., ge=0.0, le=1.0)
+    evidence: list[str] = Field(default_factory=list)
+    llm_used: bool = False
+    fallback_reason: str | None = None
+    method: str = "deterministic"
 
 
 def _prompt_from_document_context(document_context: str) -> str:
@@ -139,6 +163,44 @@ class ClarificationAnswer(BaseModel):
         return self
 
 
+class ProductPosterFields(BaseModel):
+    """Domain-specific fields for ecommerce / product poster visuals."""
+
+    product_name: str = ""
+    audience: str = ""
+    benefits: list[str] = Field(default_factory=list)
+    cta: str = ""
+    brand_tone: str = ""
+    layout: str = ""
+    color_palette: list[str] = Field(default_factory=list)
+    typography: str = ""
+
+
+class EducationalInfographicFields(BaseModel):
+    """Domain-specific fields for educational infographic / PPT visuals."""
+
+    topic: str = ""
+    learning_goal: str = ""
+    key_concepts: list[str] = Field(default_factory=list)
+    hierarchy: str = ""
+    audience: str = ""
+    visual_metaphor: str = ""
+    accessibility_notes: list[str] = Field(default_factory=list)
+
+
+class AcademicDiagramFields(BaseModel):
+    """Domain-specific fields for academic diagram visuals."""
+
+    entities: list[str] = Field(default_factory=list)
+    relationships: list[str] = Field(default_factory=list)
+    labels: list[str] = Field(default_factory=list)
+    directionality: str = ""
+    layout: str = ""
+    notation: str = ""
+    caption: str = ""
+    export_format: str = ""
+
+
 class VisualSpec(BaseModel):
     """Structured visual specification produced by VisualSpecAgent."""
 
@@ -156,6 +218,20 @@ class VisualSpec(BaseModel):
     avoid: list[str]
     output_format: str
     evaluation_dimensions: list[str]
+    product_poster: ProductPosterFields | None = None
+    educational: EducationalInfographicFields | None = None
+    academic: AcademicDiagramFields | None = None
+    field_provenance: dict[str, str] = Field(
+        default_factory=dict,
+        description="Maps field names to 'user_input' | 'inferred' | 'default'",
+    )
+
+    @model_validator(mode="after")
+    def validate_aspect_ratio(self) -> "VisualSpec":
+        if self.aspect_ratio and self.aspect_ratio not in VALID_ASPECT_RATIOS:
+            # Allow but normalize common aliases in provenance only
+            self.field_provenance.setdefault("aspect_ratio", "inferred")
+        return self
 
 
 class AgentTrace(BaseModel):
@@ -182,6 +258,11 @@ class EvaluationReport(BaseModel):
     overall_score: int = Field(..., ge=0, le=100)
     comments: list[str] = Field(default_factory=list)
     suggestions: list[str] = Field(default_factory=list)
+    metric_scores: dict[str, int] = Field(
+        default_factory=dict,
+        description="Extended per-metric scores (spec_completeness, prompt_alignment, etc.)",
+    )
+    warnings: list[str] = Field(default_factory=list)
 
 
 class GenerationResult(BaseModel):
@@ -218,6 +299,9 @@ class TaskSummary(BaseModel):
 class TaskListResponse(BaseModel):
     tasks: list[TaskSummary]
     total: int
+    limit: int = 50
+    offset: int = 0
+    returned_count: int = 0
 
 
 class StatsResponse(BaseModel):
@@ -252,6 +336,7 @@ class WorkflowState(BaseModel):
     task_id: str
     task_type: str = "ppt_visual"
     route_reason: str = ""
+    route_result: RouteResult | None = None
 
     requirement: dict[str, Any] = Field(default_factory=dict)
     domain_enrichment: dict[str, Any] = Field(default_factory=dict)
@@ -266,5 +351,7 @@ class WorkflowState(BaseModel):
 
     revision_done: bool = False
     error_message: Optional[str] = None
+    workflow_fallback: Optional[str] = None
+    workflow_error_type: Optional[str] = None
 
     model_config = ConfigDict(arbitrary_types_allowed=True)

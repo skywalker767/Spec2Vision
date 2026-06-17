@@ -45,6 +45,7 @@ class CriticAgent:
             prompt=state.prompt,
             output_path=output_path,
             trace_count=len(state.traces),
+            traces=state.traces,
         )
 
         llm_meta = llm_trace_meta(self.requested_provider, self.llm.provider_name, False, False)

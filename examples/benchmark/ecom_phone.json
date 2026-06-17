@@ -1,0 +1,10 @@
+{
+  "id": "ecom_phone",
+  "user_input": "Create a product sale banner for a new 5G smartphone launch on ecommerce shop. Highlight camera features, discount price, and shop now CTA for a product poster.",
+  "task_type": "auto",
+  "aspect_ratio": "16:9",
+  "expected_task_type": "ecommerce_banner",
+  "required_spec_fields": ["product_poster.benefits", "key_elements"],
+  "min_evaluation_score": 55,
+  "expected_output_type": "png"
+}

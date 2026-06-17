@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     image_api_key: str = ""
     image_provider: str = "openai"
 
+    demo_mode: bool = False
+    workflow_debug: bool = False
+
     min_quality_score: float = 0.6
     max_revision_rounds: int = 2
 

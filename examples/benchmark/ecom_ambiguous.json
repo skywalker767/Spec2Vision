@@ -1,0 +1,11 @@
+{
+  "id": "ecom_ambiguous",
+  "user_input": "做一个好看的海报，要有商品图和标题，风格清新。",
+  "task_type": "auto",
+  "aspect_ratio": "3:4",
+  "expected_task_type": "ecommerce_banner",
+  "required_spec_fields": ["title"],
+  "min_evaluation_score": 45,
+  "expected_output_type": "png",
+  "notes": "Ambiguous prompt; routing confidence may be low"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "acad_nlp",
+  "user_input": "绘制 NLP 论文中的 Transformer encoder-decoder 方法流程图，展示 embedding、attention、feed-forward 模块及数据流向，用于学术投稿。",
+  "task_type": "auto",
+  "aspect_ratio": "16:9",
+  "expected_task_type": "academic_figure",
+  "required_spec_fields": ["academic.entities", "academic.relationships", "output_format"],
+  "min_evaluation_score": 55,
+  "expected_output_type": "svg"
+}
