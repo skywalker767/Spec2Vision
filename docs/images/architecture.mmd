@@ -1,0 +1,61 @@
+flowchart TB
+    subgraph Client["客户端"]
+        UI[Streamlit Demo UI]
+        API_CLIENT[REST Client / curl]
+    end
+
+    subgraph API_Layer["API 层"]
+        FASTAPI[FastAPI main.py]
+        HEALTH[GET /health]
+        GEN[POST /generate]
+        TASKS[GET /tasks]
+    end
+
+    subgraph Service["服务层"]
+        GS[GenerationService]
+    end
+
+    subgraph Orchestration["编排层 LangGraph"]
+        GRAPH[VisionFlowGraph]
+    end
+
+    subgraph Agents["Agent 层"]
+        ROUTER[TaskRouterAgent]
+        REQ[RequirementAgent]
+        VS[VisualSpecAgent]
+        DOM[Domain Agents]
+        PROMPT[PromptAgent]
+        CRITIC[CriticAgent]
+        REV[RevisionAgent]
+        ASSET[AssetManagerAgent]
+    end
+
+    subgraph Tools["Tool 层"]
+        IMG[MockImageGenerator]
+        DIA[DiagramGenerator]
+        EVA[Evaluator]
+        TRACE[TraceLogger]
+        LLM[LLM Provider]
+    end
+
+    subgraph Storage["存储层"]
+        SQLITE[(SQLite)]
+        FILES[storage/]
+    end
+
+    UI --> FASTAPI
+    API_CLIENT --> FASTAPI
+    FASTAPI --> HEALTH
+    FASTAPI --> GEN
+    FASTAPI --> TASKS
+    GEN --> GS
+    GS --> GRAPH
+    GRAPH --> ROUTER --> REQ --> VS --> DOM --> PROMPT
+    PROMPT --> ASSET --> CRITIC --> REV
+    ASSET --> IMG
+    ASSET --> DIA
+    CRITIC --> EVA
+    Agents --> TRACE
+    Agents -.-> LLM
+    GS --> SQLITE
+    Tools --> FILES
