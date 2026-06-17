@@ -8,8 +8,10 @@
 
 *企业级应用软件设计与开发 · CS599 · Agentic AI 原生开发*
 
-<!-- Author: skywalker767 -->
-<p style="color: transparent; font-size: 0; line-height: 0; margin: 0; padding: 0; height: 0; overflow: hidden; user-select: none;" aria-hidden="true">skywalker767</p>
+<!--
+Author: skywalker767
+https://github.com/skywalker767
+-->
 
 <br>
 
