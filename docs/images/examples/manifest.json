@@ -1,23 +1,116 @@
-[
-  {
-    "slug": "ecommerce_coffee",
-    "file": "examples/ecommerce_coffee.png",
-    "task_type": "ecommerce_banner",
-    "score": 41,
-    "title": "演示视觉标题"
-  },
-  {
-    "slug": "academic_pipeline",
-    "file": "examples/academic_pipeline.svg",
-    "task_type": "academic_figure",
-    "score": 67,
-    "title": "演示视觉标题"
-  },
-  {
-    "slug": "ppt_cover",
-    "file": "examples/ppt_cover.png",
-    "task_type": "ppt_visual",
-    "score": 56,
-    "title": "演示视觉标题"
-  }
-]
+{
+  "generated_at": "2026-06-17T14:27:39.523900+00:00",
+  "image_provider": "openai",
+  "llm_provider": "deepseek",
+  "count": 9,
+  "items": [
+    {
+      "slug": "ecommerce_coffee",
+      "file": "examples/ecommerce_coffee.png",
+      "featured": true,
+      "caption": "冰咖啡小红书促销主图",
+      "task_type": "ecommerce_banner",
+      "aspect_ratio": "1:1",
+      "format": "png",
+      "title": "冰爽0卡·夏日冰美式",
+      "score": 74,
+      "provider": "openai"
+    },
+    {
+      "slug": "academic_pipeline",
+      "file": "examples/academic_pipeline.svg",
+      "featured": true,
+      "caption": "五阶段双分支网络方法流程图",
+      "task_type": "academic_figure",
+      "aspect_ratio": "4:3",
+      "format": "svg",
+      "title": "五阶段机器学习方法流水线图",
+      "score": 67,
+      "provider": "diagram_generator"
+    },
+    {
+      "slug": "ppt_cover",
+      "file": "examples/ppt_cover.png",
+      "featured": true,
+      "caption": "AI 驱动软件开发课程封面",
+      "task_type": "ppt_visual",
+      "aspect_ratio": "16:9",
+      "format": "png",
+      "title": "智能驱动·未来架构",
+      "score": 74,
+      "provider": "openai"
+    },
+    {
+      "slug": "ecom_skincare",
+      "file": "examples/ecom_skincare.png",
+      "featured": false,
+      "caption": "双11护肤品详情页头图",
+      "task_type": "ecommerce_banner",
+      "aspect_ratio": "16:9",
+      "format": "png",
+      "title": "双11精华液限时特惠",
+      "score": 74,
+      "provider": "openai"
+    },
+    {
+      "slug": "ecom_sneakers",
+      "file": "examples/ecom_sneakers.png",
+      "featured": false,
+      "caption": "运动鞋新品科技缓震广告",
+      "task_type": "ecommerce_banner",
+      "aspect_ratio": "16:9",
+      "format": "png",
+      "title": "科技缓震·轻弹启程",
+      "score": 77,
+      "provider": "openai"
+    },
+    {
+      "slug": "acad_graphical",
+      "file": "examples/acad_graphical.svg",
+      "featured": false,
+      "caption": "NLP Encoder-Decoder 图形摘要",
+      "task_type": "academic_figure",
+      "aspect_ratio": "16:9",
+      "format": "svg",
+      "title": "编码器-解码器架构数据流管道图",
+      "score": 67,
+      "provider": "diagram_generator"
+    },
+    {
+      "slug": "acad_cv_pipeline",
+      "file": "examples/acad_cv_pipeline.svg",
+      "featured": false,
+      "caption": "计算机视觉实验 pipeline",
+      "task_type": "academic_figure",
+      "aspect_ratio": "4:3",
+      "format": "svg",
+      "title": "计算机视觉实验pipeline示意图",
+      "score": 63,
+      "provider": "diagram_generator"
+    },
+    {
+      "slug": "ppt_business",
+      "file": "examples/ppt_business.png",
+      "featured": false,
+      "caption": "商业增长复盘章节页",
+      "task_type": "ppt_visual",
+      "aspect_ratio": "16:9",
+      "format": "png",
+      "title": "稳健增长：营收攀升轨迹",
+      "score": 72,
+      "provider": "openai"
+    },
+    {
+      "slug": "ppt_infographic",
+      "file": "examples/ppt_infographic.png",
+      "featured": false,
+      "caption": "气候变化科普信息图",
+      "task_type": "ppt_visual",
+      "aspect_ratio": "16:9",
+      "format": "png",
+      "title": "气候行动·从了解开始",
+      "score": 77,
+      "provider": "openai"
+    }
+  ]
+}
