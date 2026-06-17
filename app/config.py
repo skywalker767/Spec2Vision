@@ -52,6 +52,14 @@ class Settings(BaseSettings):
     demo_mode: bool = False
     workflow_debug: bool = False
 
+    # Agentic RAG (local TF-IDF index, no external key required)
+    rag_enabled: bool = True
+    rag_top_k: int = 3
+
+    # Observability
+    log_level: str = "INFO"
+    log_json: bool = False
+
     min_quality_score: float = 0.6
     max_revision_rounds: int = 2
 

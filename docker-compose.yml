@@ -1,5 +1,8 @@
 version: "3.8"
 
+# Default: docker compose up --build
+# Dev reload:  docker compose --profile dev up --build
+
 services:
   api:
     build: .
@@ -7,27 +10,19 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      - LLM_PROVIDER=${LLM_PROVIDER:-mock}
+      - IMAGE_PROVIDER=${IMAGE_PROVIDER:-mock}
+      - RAG_ENABLED=${RAG_ENABLED:-true}
     volumes:
       - ./storage:/app/storage
+      - ./data:/app/data
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 15s
-    profiles: ["dev", "prod"]
-
-  api-dev:
-    extends:
-      service: api
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    profiles: ["dev"]
-
-  api-prod:
-    extends:
-      service: api
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
-    profiles: ["prod"]
+      start_period: 20s
 
   ui:
     build: .
@@ -35,22 +30,27 @@ services:
       - "8501:8501"
     env_file:
       - .env
+    environment:
+      - API_BASE_URL=http://api:8000
     volumes:
       - ./storage:/app/storage
+    command: streamlit run app/ui/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+    depends_on:
+      api:
+        condition: service_healthy
+
+  api-dev:
+    extends:
+      service: api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    profiles: ["dev"]
+
+  ui-dev:
+    extends:
+      service: ui
     environment:
       - API_BASE_URL=http://api-dev:8000
-    command: streamlit run app/ui/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
     depends_on:
       api-dev:
         condition: service_healthy
     profiles: ["dev"]
-
-  ui-prod:
-    extends:
-      service: ui
-    environment:
-      - API_BASE_URL=http://api-prod:8000
-    depends_on:
-      api-prod:
-        condition: service_healthy
-    profiles: ["prod"]

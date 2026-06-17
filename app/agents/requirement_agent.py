@@ -80,6 +80,7 @@ class RequirementAgent:
         requirement = self._merge_clarification(
             requirement, state.clarification_resolved, task_type
         )
+        requirement = self._apply_rag(state, requirement, text, task_type)
 
         llm_meta = llm_trace_meta(self.requested_provider, self.llm.provider_name, False, False)
         llm_data, llm_meta = self._try_llm(text, task_type, req)
@@ -171,6 +172,43 @@ class RequirementAgent:
             if clarification.get("layout_blank"):
                 requirement["layout_blank"] = clarification["layout_blank"]
 
+        return requirement
+
+    def _apply_rag(
+        self,
+        state: WorkflowState,
+        requirement: dict,
+        text: str,
+        task_type: str,
+    ) -> dict:
+        from app.config import get_settings
+        from app.rag.retriever import get_retriever
+
+        settings = get_settings()
+        if not settings.rag_enabled:
+            return requirement
+        rag = get_retriever().build_context(text, task_type=task_type, top_k=settings.rag_top_k)
+        if not rag.hits and not rag.applied_constraints:
+            return requirement
+        state.rag_hits = [h.model_dump() for h in rag.hits]
+        requirement["rag_hits"] = state.rag_hits
+        constraints = requirement.setdefault("constraints", [])
+        for c in rag.applied_constraints:
+            if c not in constraints:
+                constraints.append(c)
+        append_trace(
+            state.traces,
+            agent_name="RagAgent",
+            step="retrieve_guidelines",
+            input_summary=text[:120],
+            output_summary=f"hits={len(rag.hits)} constraints={len(rag.applied_constraints)}",
+            metadata={
+                "hits": state.rag_hits,
+                "applied_constraints": rag.applied_constraints,
+                "pipeline_step": "rag_retrieval",
+            },
+            pipeline_step="rag_retrieval",
+        )
         return requirement
 
     def _try_llm(self, text: str, task_type: str, req) -> tuple[dict | None, dict]:

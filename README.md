@@ -4,18 +4,31 @@
 
 **从一句模糊需求，到可下载的视觉资产 —— 先澄清，再规格化，再生成，再评估**
 
-*Visual Spec 驱动的多智能体视觉内容生成 · CS599 课程项目原型*
+*Visual Spec 驱动的多 Agent 视觉内容生成 · CS599 企业级 Agentic AI 大作业*
+
+### CS599 评分点速览
+
+| 能力 | 证据 |
+|------|------|
+| **SDD / Visual Spec** | `docs/specs/visual_spec.md` |
+| **Multi-Agent + LangGraph** | `app/graph/visionflow_graph.py` |
+| **MCP Tool Server** | `app/mcp/` · `scripts/run_mcp_server.py` |
+| **Agentic RAG** | `app/rag/` · `data/knowledge_base/` |
+| **Evaluation + Trace** | `GET /traces/{id}` · `app/tools/evaluator.py` |
+| **Docker / Security / CI** | `docker-compose.yml` · `app/core/` · 147 tests |
+
+📋 [评分对照](docs/grading_mapping.md) · [答辩清单](docs/final_demo_checklist.md) · **在线 Demo: TODO replace with deployed URL**
 
 <br>
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io/)
-[![Tests](https://img.shields.io/badge/Tests-129_passed-22C55E?style=for-the-badge)](docs/test_report.md)
+[![Tests](https://img.shields.io/badge/Tests-147_passed-22C55E?style=for-the-badge)](docs/test_report.md)
 [![CI](https://github.com/skywalker767/Spec2Vision/actions/workflows/test.yml/badge.svg)](.github/workflows/test.yml)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
-[效果展示](#-效果展示) · [5 分钟 Demo](#-5-分钟-demo) · [快速开始](#-快速开始) · [修复说明](docs/fix_report.md) · [测试报告](docs/test_report.md)
+[效果展示](#-效果展示) · [5 分钟 Demo](#-5-分钟-demo) · [MCP / RAG](#-mcp--agentic-rag) · [快速开始](#-快速开始) · [部署](docs/deployment.md) · [评分对照](docs/grading_mapping.md)
 
 <br>
 
@@ -133,6 +146,31 @@
 元数据：`docs/images/examples/manifest.json` · 用例 JSON：[`examples/`](examples/) · Benchmark：[`benchmarks/examples.jsonl`](benchmarks/examples.jsonl)
 
 </details>
+
+---
+
+---
+
+## 🔌 MCP / Agentic RAG
+
+### MCP Tool Server（stdio）
+
+```bash
+python scripts/run_mcp_server.py
+# Tools: create_visual_spec | generate_visual_asset | evaluate_visual_asset | query_generation_trace
+```
+
+详见 [`docs/examples/mcp_usage.md`](docs/examples/mcp_usage.md) · [`docs/specs/mcp_spec.md`](docs/specs/mcp_spec.md)
+
+### Agentic RAG
+
+```bash
+python scripts/ingest_knowledge_base.py
+python benchmark.py --demo examples/ecommerce_case.json
+# trace.json 含 rag_retrieval 步骤
+```
+
+知识库：`data/knowledge_base/`（电商 / 学术 / PPT 规范）· 详见 [`docs/examples/rag_usage.md`](docs/examples/rag_usage.md)
 
 ---
 
@@ -392,7 +430,7 @@ Streamlit 界面展示：
 
 ## 🧪 Testing
 
-**129 passed, 1 skipped** · 默认 Mock · 无外部 API · 可验证报告：[`docs/test_report.md`](docs/test_report.md)
+**147 passed, 1 skipped** · 默认 Mock · 无外部 API · 可验证报告：[`docs/test_report.md`](docs/test_report.md)
 
 ```bash
 cp .env.example .env && python -m pytest tests/ -v    # 验收路径
@@ -400,7 +438,9 @@ python scripts/validate_repo_format.py               # 防止单行压缩回归
 python -m compileall -q app tests scripts benchmark.py
 make test
 make lint          # ruff
-make format        # black
+make smoke          # MCP + RAG smoke
+make rag-ingest     # 构建知识库索引
+make mcp            # 启动 MCP stdio server
 make coverage      # ≥80% 核心模块
 ```
 

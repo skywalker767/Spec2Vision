@@ -388,6 +388,16 @@ class HealthResponse(BaseModel):
     status: str = "ok"
     llm_provider: str = "unknown"
     image_provider: str = "unknown"
+    rag_enabled: bool = False
+    database_ok: bool = True
+    storage_ok: bool = True
+    version: str = "1.0.0"
+
+
+class TraceResponse(BaseModel):
+    trace_id: str
+    traces: list[dict[str, Any]] = Field(default_factory=list)
+    task: dict[str, Any] | None = None
 
 
 class WorkflowState(BaseModel):
@@ -400,6 +410,7 @@ class WorkflowState(BaseModel):
     route_result: RouteResult | None = None
 
     requirement: dict[str, Any] = Field(default_factory=dict)
+    rag_hits: list[dict[str, Any]] = Field(default_factory=list)
     domain_enrichment: dict[str, Any] = Field(default_factory=dict)
     clarification_questions: list[ClarificationQuestion] = Field(default_factory=list)
     clarification_resolved: dict[str, str] = Field(default_factory=dict)

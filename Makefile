@@ -1,4 +1,4 @@
-.PHONY: install dev api ui test coverage benchmark demo lint format clean docker-dev docker-prod
+.PHONY: install dev api ui test coverage benchmark demo lint format clean docker-dev docker-prod smoke rag-ingest mcp validate export-demo
 
 PYTHON ?= python
 
@@ -67,7 +67,16 @@ clean:
 	$(CLEAN_CMD)
 
 docker-dev:
-	docker compose --profile dev up --build
+	docker compose up --build
 
 docker-prod:
-	docker compose --profile prod up --build -d
+	docker compose up --build -d
+
+smoke:
+	$(DEMO_ENV) $(PY) scripts/smoke_test.py
+
+rag-ingest:
+	$(PY) scripts/ingest_knowledge_base.py
+
+mcp:
+	$(DEMO_ENV) $(PY) scripts/run_mcp_server.py

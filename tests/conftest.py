@@ -174,6 +174,37 @@ class _FakeHttpxClient:
         return _FakeResponse(content=base64.b64decode(TINY_PNG_B64))
 
 
+@pytest.fixture
+def client():
+    from fastapi.testclient import TestClient
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.pool import StaticPool
+
+    from app.main import app
+    from app.models.database import Base, get_db
+
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    Base.metadata.create_all(bind=engine)
+    TestSession = sessionmaker(bind=engine)
+
+    def override_get_db():
+        db = TestSession()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+    with TestClient(app) as c:
+        yield c
+    app.dependency_overrides.clear()
+
+
 @pytest.fixture(autouse=True)
 def mock_provider_env(monkeypatch):
     """Default test environment: deterministic mock providers, NO API keys.
@@ -192,6 +223,7 @@ def mock_provider_env(monkeypatch):
     monkeypatch.setenv("DEEPSEEK_API_KEY", "")
     monkeypatch.setenv("IMAGE_API_KEY", "")
     monkeypatch.setenv("VISION_EVALUATOR_PROVIDER", "none")
+    monkeypatch.setenv("RAG_ENABLED", "true")
     get_settings.cache_clear()
     vg_module._graph_instance = None
     svc_module._service = None

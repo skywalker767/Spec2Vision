@@ -139,6 +139,30 @@ class GenerationService:
             return None
         return GenerationResult.model_validate(data)
 
+    def get_trace_bundle(self, db: Session, task_id: str) -> dict | None:
+        """Load persisted trace JSON plus optional task summary."""
+        import json
+
+        settings = get_settings()
+        trace_path = settings.traces_dir / f"{task_id}.json"
+        traces: list[dict] = []
+        if trace_path.exists():
+            traces = json.loads(trace_path.read_text(encoding="utf-8"))
+        record = self.get_task(db, task_id)
+        if not traces and not record:
+            return None
+        payload: dict = {"trace_id": task_id, "traces": traces}
+        if record:
+            payload["task"] = {
+                "task_id": record.task_id,
+                "task_type": record.task_type,
+                "status": record.status,
+                "overall_score": record.evaluation.overall_score,
+                "output_path": record.output_path,
+                "duration_ms": record.duration_ms,
+            }
+        return payload
+
     def delete_task(self, db: Session, task_id: str) -> bool:
         return delete_task_record(db, task_id)
 

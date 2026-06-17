@@ -115,6 +115,10 @@ class VisualSpecAgent:
             req.get("scenario"), defaults["scenario"], "scenario", provenance
         )
         constraints = list(defaults["constraints"])
+        for c in req.get("constraints", []):
+            if c and c not in constraints:
+                constraints.append(c)
+                provenance[f"constraint:{c}"] = "rag"
         avoid = list(defaults["avoid"])
         text_requirements = list(defaults["text_requirements"])
         evaluation_dimensions = list(defaults["evaluation_dimensions"])
