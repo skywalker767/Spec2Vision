@@ -1,26 +1,103 @@
-# Spec2Vision
+<div align="center">
 
-**从一句模糊需求，到可下载的视觉资产 —— 先澄清，再规格化，再生成，再评估**
 
-*Visual Spec 驱动的多 Agent 视觉内容生成 · CS599 Agentic AI 大作业*
+# ✨ Spec2Vision
 
-## 项目简介
+### 从一句模糊需求，到可下载的视觉资产
 
-Spec2Vision 是一个 Visual Spec 驱动的多 Agent 视觉内容生成系统。项目将用户的一句模糊需求转化为可下载的视觉资产，完整流程包括任务路由、交互澄清、结构化 Visual Spec 生成、Prompt 构建、图像 / SVG 生成、质量评估与 Agent Trace 记录。
+**先澄清 · 再规格化 · 再生成 · 再评估**
 
-项目主要解决传统视觉生成中需求含糊、Prompt 反复调整、生成过程不可追踪、结果质量难以评估的问题。系统支持电商主图、学术流程图、PPT 视觉封面等典型场景，并提供 Mock Provider，方便在无 API Key 的情况下完成本地验收和复现实验。
+<br>
 
-## 方向
+<p>
+  <b>Visual Spec 驱动的多 Agent 视觉内容生成系统</b><br>
+  <sub>CS599 Final Project · Agentic AI 原生开发方向</sub>
+</p>
 
-**方向一：Agentic AI 原生开发**
 
-本项目从零设计并实现一个 Agentic AI 原生应用，围绕视觉内容生成任务构建多 Agent 协作流水线。系统将视觉生成任务拆分为 Router、Clarification、Requirement、Visual Spec、Domain Agent、Prompt、Asset Manager、Evaluator 等多个职责明确的 Agent，并通过 LangGraph / pipeline 进行编排。
+<br>
 
-## 项目状态
+<p>
+  <img src="https://img.shields.io/badge/Direction-Agentic_AI_Native-7C3AED?style=for-the-badge" alt="Direction">
+  <img src="https://img.shields.io/badge/Status-Final_Completed-22C55E?style=for-the-badge" alt="Final">
+  <img src="https://img.shields.io/badge/Provider-Mock_%2F_OpenAI-0EA5E9?style=for-the-badge" alt="Provider">
+  <img src="https://img.shields.io/badge/Trace-Agentic_Workflow-F97316?style=for-the-badge" alt="Trace">
+</p>
 
-- [x] Proposal
-- [x] MVP
-- [x] Final
+
+<p>
+  <a href="#-效果展示">✨ 效果展示</a> ·
+  <a href="#-5-分钟-demo">⏱ 5 分钟 Demo</a> ·
+  <a href="#-mcp--agentic-rag">🧩 MCP / RAG</a> ·
+  <a href="#-快速开始">🚀 快速开始</a> ·
+  <a href="#-目录结构">📁 目录结构</a>
+</p>
+
+
+</div>
+
+---
+
+## 🌟 项目简介
+
+> **一句话概括：** Spec2Vision 把用户的一句模糊视觉需求，自动转化为结构化 Visual Spec，并通过多 Agent 协作生成可下载、可评估、可追踪的视觉资产。
+
+<table>
+  <tr>
+    <td width="33%">
+      <h3>🎯 解决什么问题</h3>
+      <p>传统 AI 生图高度依赖一次性 Prompt，需求含糊、反复试错、生成过程黑盒、结果质量难解释。</p>
+    </td>
+    <td width="33%">
+      <h3>🤖 怎么解决</h3>
+      <p>系统通过 Router、Clarification、Visual Spec、Prompt、Asset Manager、Evaluator 等 Agent 分工协作。</p>
+    </td>
+    <td width="33%">
+      <h3>🖼️ 输出什么</h3>
+      <p>生成电商主图、学术流程图、PPT 视觉封面等资产，并输出 Evaluation Report 与 Agent Trace。</p>
+    </td>
+  </tr>
+</table>
+
+
+---
+
+## 🧭 方向
+
+<table>
+  <tr>
+    <td width="30%" align="center">
+      <h3>✅ 方向一</h3>
+      <b>Agentic AI 原生开发</b>
+    </td>
+    <td width="70%">
+      本项目从零设计并实现一个 Agentic AI 原生应用，围绕视觉内容生成任务构建多 Agent 协作流水线。系统将视觉生成任务拆分为 <code>Router</code>、<code>Clarification</code>、<code>Requirement</code>、<code>Visual Spec</code>、<code>Domain Agent</code>、<code>Prompt</code>、<code>Asset Manager</code>、<code>Evaluator</code> 等职责明确的 Agent，并通过 LangGraph / pipeline 进行编排。
+    </td>
+  </tr>
+</table>
+
+
+---
+
+## 🏁 项目状态
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <h3>✅ Proposal</h3>
+      <p>项目选题、需求边界与技术路线已完成</p>
+    </td>
+    <td align="center" width="33%">
+      <h3>✅ MVP</h3>
+      <p>核心多 Agent 生成流水线已完成</p>
+    </td>
+    <td align="center" width="33%">
+      <h3>✅ Final</h3>
+      <p>Demo、测试、文档、报告与答辩材料已整理</p>
+    </td>
+  </tr>
+</table>
+
 
 当前版本已完成核心多 Agent 流水线、Mock / OpenAI Provider、Agentic RAG、MCP Tool Server、Evaluator、Trace、API、UI、Docker 与测试集成，并已整理最终答辩所需的文档、Demo 用例与测试报告。
 
